@@ -1,0 +1,25 @@
+function [q1_dot_dot, q2_dot_dot] = compute_q1dd_q2dd(T1, T2, q1, q2, q1_dot, q2_dot)
+    m1 = 5; 
+    m2 = 3;  
+    l1 = 0.25; 
+    l2 = 0.15; 
+    g = 9.81; 
+    M11 = (m1 + m2)l1^2 + m2*l2(l2 + 2*l1*cos(q2));
+    M12=m2*l2*(l2 + l1*cos(q2));
+    M21=m2*l2*(l2 + l1*cos(q2));
+    M22=m2*l2^2;
+    M=[M11 M12; M21 M22];
+    C11 = -m2*l1*l2*sin(q2)*q2_dot;
+    C12 = -m2*l1*l2*sin(q2)*(q1_dot + q2_dot);
+    C21 = 0;
+    C22 = m2*l1*l2*sin(q2)*q1_dot;
+    C = [C11 C12; C21 C22];
+    G1 = m1*l1*g*cos(q1) + m2*g*(l2*cos(q1 + q2) + l1*cos(q1));
+    G2 = m2*g*l2*cos(q1 + q2);
+    G = [G1; G2];
+    tau = [T1; T2];
+    q_dot = [q1_dot; q2_dot];
+    q_dot_dot = (tau - (C*q_dot + G))./M;
+    q1_dot_dot = q_dot_dot(1);
+    q2_dot_dot = q_dot_dot(2);
+end
